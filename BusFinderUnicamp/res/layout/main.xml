@@ -3,10 +3,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
+
+    <com.google.android.maps.MapView
+        android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:layout_weight="1.03"
+        android:apiKey="05p2PpWpGDtW3CNf9u5hbSNI45Wo-DzNrsyZCzg"
+        android:clickable="true" />
+
+    <Spinner
+        android:id="@+id/linhas"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

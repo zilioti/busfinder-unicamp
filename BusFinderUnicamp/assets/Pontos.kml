@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Android Teste Franca</name>
+  <description><![CDATA[]]></description>
+  <Style id="style5">
+    <IconStyle>
+      <Icon>
+        <href></href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style8">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style4">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style10">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style7">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style9">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style6">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style2">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style3">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style1">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Placemark>
+    <name>Franca - São Paulo</name>
+    <description><![CDATA[Brazil<br>]]></description>
+    <styleUrl>#style5</styleUrl>
+    <Point>
+      <coordinates>-47.419712,-20.541773,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 2</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style8</styleUrl>
+    <Point>
+      <coordinates>-47.418816,-20.542913,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 3</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style4</styleUrl>
+    <Point>
+      <coordinates>-47.417187,-20.539780,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 4</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style10</styleUrl>
+    <Point>
+      <coordinates>-47.423130,-20.539700,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 5</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style7</styleUrl>
+    <Point>
+      <coordinates>-47.421799,-20.543356,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 6</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style9</styleUrl>
+    <Point>
+      <coordinates>-47.424374,-20.541487,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 7</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style6</styleUrl>
+    <Point>
+      <coordinates>-47.415939,-20.542753,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 8</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Point>
+      <coordinates>-47.420685,-20.539478,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 9</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style3</styleUrl>
+    <Point>
+      <coordinates>-47.421799,-20.541025,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Placemark 10</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Point>
+      <coordinates>-47.420448,-20.544361,0.000000</coordinates>
+    </Point>
+  </Placemark>
+</Document>
+</kml>
