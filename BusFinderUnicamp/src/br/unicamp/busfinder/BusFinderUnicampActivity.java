@@ -13,11 +13,14 @@ import org.xml.sax.XMLReader;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,12 +36,14 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class BusFinderUnicampActivity extends MapActivity implements LocationListener {
+public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
     
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
 	private static final int CENTER_LONGITUDE = (int) (-47.069729 * 1E6);
+	
+	SharedPreferences prefs;
 	
 	private String[] linhas = { "Linha 1", "Linha 2"};
 	
@@ -57,6 +62,8 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         setContentView(R.layout.main);
         
        
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener((OnSharedPreferenceChangeListener) this);
         
         Location loc = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
         getLocationManager().requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
@@ -199,7 +206,7 @@ public void DesenhaPontosOnibus(String arquivo) {
         
        // Log.d("aaaa",ultimo);
         
-        String rota[] = ultimo.split("\n");
+       /* String rota[] = ultimo.split("\n");
         
         
         for(String r : rota ){
@@ -210,7 +217,7 @@ public void DesenhaPontosOnibus(String arquivo) {
         	GeoPoint point = new GeoPoint(y, x);
         	Route.add(point);   
    	
-        }
+        } */
         
         
         
@@ -289,6 +296,14 @@ public void onProviderEnabled(String provider) {
 
 @Override
 public void onStatusChanged(String provider, int status, Bundle extras) {
+	// TODO Auto-generated method stub
+	
+}
+
+
+
+@Override
+public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
 	// TODO Auto-generated method stub
 	
 }
