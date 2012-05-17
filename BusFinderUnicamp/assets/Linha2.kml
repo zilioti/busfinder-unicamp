@@ -80,6 +80,12 @@
     <Point>
       <coordinates>-47.069732,-22.817461,0.000000</coordinates>
     </Point>
+     <name>Franca - São Paulo</name>
+    <description><![CDATA[Brazil<br>]]></description>
+    <styleUrl>#style5</styleUrl>
+    <Point>
+      <coordinates>-47.069832,-22.817441,0.000000</coordinates>
+    </Point>
   </Placemark>
 </Document>
 </kml>

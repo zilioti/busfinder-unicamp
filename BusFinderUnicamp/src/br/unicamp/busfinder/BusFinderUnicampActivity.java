@@ -2,6 +2,7 @@ package br.unicamp.busfinder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 import javax.xml.parsers.SAXParser;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,6 +37,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
 
 public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
@@ -91,6 +94,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.setStreetView(false);
                     map.getOverlays().clear();
                     map.invalidate();
+                    
                     DesenhaPontosOnibus("Linha2.kml");		
         		}
         		
@@ -190,19 +194,25 @@ public void DesenhaPontosOnibus(String arquivo) {
         /* Definicao da lista de pontos ao redor */
         int x;
         int y;
-
         
         String ultimo = coordenada.get(coordenada.size()-2);
         
-        coordenada.remove(coordenada.size()-2);
+        List<OverlayItem> pontos = new ArrayList<OverlayItem>();
+        		
+        //coordenada.remove(coordenada.size()-2);
         coordenada.remove(coordenada.size()-1);
         for (String p : coordenada){
         	String c[] = p.split("\\,");
         	x = (int)(Double.parseDouble(c[0]) * 1E6); 
         	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
         	GeoPoint point = new GeoPoint(y, x);
-        	Points.add(point);        	
+        	pontos.add(new OverlayItem(point,"p","xtotal"));
+        	//Points.add(point);        	
         }
+        
+        Drawable imagem = getResources().getDrawable(R.drawable.mapa_pin);
+        ImagensOverlay pontosOverlay = new ImagensOverlay(this,pontos,imagem);
+        map.getOverlays().add(pontosOverlay);
         
        // Log.d("aaaa",ultimo);
         
@@ -228,12 +238,12 @@ public void DesenhaPontosOnibus(String arquivo) {
         controller.setZoom(17);
         
         /* Marcacao da lista de pontos */
-        Overlay overlayp;
+      /*  Overlay overlayp;
         for (GeoPoint o : Points){
         	overlayp = new PointOverlay(o, map);
         	map.getOverlays().add(overlayp);
         } 
-        
+        */
         ListIterator<GeoPoint> i = Route.listIterator();
         
         while (i.hasNext()){
@@ -245,8 +255,8 @@ public void DesenhaPontosOnibus(String arquivo) {
         		
         		Log.d("bbbb",s.toString());
 				
-        		overlayp = new RouteOverlay(s, e, map);
-				map.getOverlays().add(overlayp);
+        		//overlayp = new RouteOverlay(s, e, map);
+				//map.getOverlays().add(overlayp);
 				
 			
 			} catch (Exception e) {
