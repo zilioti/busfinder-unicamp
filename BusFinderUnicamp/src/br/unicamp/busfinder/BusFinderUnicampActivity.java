@@ -8,6 +8,12 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+
+import android.content.Context;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,8 +26,9 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class BusFinderUnicampActivity extends MapActivity {
+public class BusFinderUnicampActivity extends MapActivity implements LocationListener {
    
+    
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
 	private static final int CENTER_LONGITUDE = (int) (-47.069729 * 1E6);
@@ -42,6 +49,12 @@ public class BusFinderUnicampActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+       
+        
+        Location loc = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        getLocationManager().requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+        
+        
         final Spinner combo = (Spinner) findViewById(R.id.linhas);
         ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, linhas);
         adaptador.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -49,7 +62,7 @@ public class BusFinderUnicampActivity extends MapActivity {
         
         combo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         	
-        	public void onItemSelected(AdapterView parent,View v, int posicao, long id){
+        	public void onItemSelected(AdapterView<?> parent,View v, int posicao, long id){
         		
         		if (posicao == 0) {
         		map.setSatellite(false);
@@ -70,7 +83,7 @@ public class BusFinderUnicampActivity extends MapActivity {
         	}
 
 			@Override
-			public void onNothingSelected(AdapterView parent) {
+			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -133,7 +146,6 @@ public void DesenhaPontosOnibus(String arquivo) {
         
         controller = map.getController();
         
-        
         /* Definicao do ponto centra da cidade */
         GeoPoint pointCB = new 
         		GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
@@ -142,17 +154,18 @@ public void DesenhaPontosOnibus(String arquivo) {
         /* Definicao da lista de pontos ao redor */
         int x;
         int y;
+        
+        coordenada.remove(coordenada.size()-1);
         for (String p : coordenada){
         	String c[] = p.split("\\,");
         	x = (int)(Double.parseDouble(c[0]) * 1E6);
         	y = (int)(Double.parseDouble(c[1]) * 1E6);
         	GeoPoint point = new GeoPoint(y, x);
-        	Points.add(point);
-        	
+        	Points.add(point);        	
         }
         
         /* Centralizacao no ponto centra da cidade */
-        controller.setCenter(pointCB);
+        //controller.setCenter(pointCB);
         controller.animateTo(pointCB);
         controller.setZoom(17);
         
@@ -163,4 +176,48 @@ public void DesenhaPontosOnibus(String arquivo) {
         	map.getOverlays().add(overlayp);
         } 
     }
+
+
+
+
+private LocationManager getLocationManager() {
+	LocationManager locationManager = (LocationManager) getSystemService (Context.LOCATION_SERVICE);
+	return locationManager;
+}
+
+@Override
+public void onLocationChanged(Location location) {
+	// TODO Auto-generated method stub
+	int lat = (int)(location.getLatitude() * 1E6);
+	int longitude = (int)(location.getLongitude() * 1E6);
+	GeoPoint pointooo = new GeoPoint(lat, longitude);
+	controller.animateTo(pointooo);
+	
+}
+
+
+
+@Override
+public void onProviderDisabled(String provider) {
+	// TODO Auto-generated method stub
+	
+}
+
+
+
+@Override
+public void onProviderEnabled(String provider) {
+	// TODO Auto-generated method stub
+	
+}
+
+
+
+@Override
+public void onStatusChanged(String provider, int status, Bundle extras) {
+	// TODO Auto-generated method stub
+	
+}
+
+
 }
