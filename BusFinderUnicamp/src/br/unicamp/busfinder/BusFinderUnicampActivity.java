@@ -1,6 +1,8 @@
 package br.unicamp.busfinder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -15,6 +17,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -93,7 +96,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         map = (MapView) findViewById(R.id.map);
         map.setBuiltInZoomControls(true);
         
-        /* Mapa como de trânsito */
+        /* Mapa como de trï¿½nsito */
         map.setSatellite(true);
         map.setTraffic(false);
         map.setStreetView(false);
@@ -150,19 +153,42 @@ public void DesenhaPontosOnibus(String arquivo) {
         GeoPoint pointCB = new 
         		GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
         ArrayList<GeoPoint> Points = new ArrayList<GeoPoint>();
+        ArrayList<GeoPoint> Route = new ArrayList<GeoPoint>();
         
         /* Definicao da lista de pontos ao redor */
         int x;
         int y;
+
         
+        String ultimo = coordenada.get(coordenada.size()-2);
+        
+        coordenada.remove(coordenada.size()-2);
         coordenada.remove(coordenada.size()-1);
         for (String p : coordenada){
         	String c[] = p.split("\\,");
-        	x = (int)(Double.parseDouble(c[0]) * 1E6);
-        	y = (int)(Double.parseDouble(c[1]) * 1E6);
+        	x = (int)(Double.parseDouble(c[0]) * 1E6); 
+        	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
         	GeoPoint point = new GeoPoint(y, x);
         	Points.add(point);        	
         }
+        
+       // Log.d("aaaa",ultimo);
+        
+        String rota[] = ultimo.split("\n");
+        
+        
+        for(String r : rota ){
+        	String c[] = r.split("\\,");
+        	//Log.d("aaaa",c[1]);
+        	x = (int)(Double.parseDouble(c[0]) * 1E6); 
+        	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
+        	GeoPoint point = new GeoPoint(y, x);
+        	Route.add(point);   
+   	
+        }
+        
+        
+        
         
         /* Centralizacao no ponto centra da cidade */
         //controller.setCenter(pointCB);
@@ -175,6 +201,29 @@ public void DesenhaPontosOnibus(String arquivo) {
         	overlayp = new PointOverlay(o, map);
         	map.getOverlays().add(overlayp);
         } 
+        
+        ListIterator<GeoPoint> i = Route.listIterator();
+        
+        while (i.hasNext()){
+        	try {
+        		
+        		GeoPoint s = i.previous();
+        		i.next();
+        		GeoPoint e = i.next();
+        		
+        		Log.d("bbbb",s.toString());
+				
+        		overlayp = new RouteOverlay(s, e, map);
+				map.getOverlays().add(overlayp);
+				
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				i.next();
+			}
+        }
+        
+  
     }
 
 

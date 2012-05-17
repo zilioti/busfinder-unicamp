@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.03"
-        android:apiKey="05p2PpWpGDtW3CNf9u5hbSNI45Wo-DzNrsyZCzg"
+        android:apiKey="0sztTwjxyatDEVZLijfnD1WEvDRLJeKDsCQyHhA"
         android:clickable="true" />
 
     <Spinner
