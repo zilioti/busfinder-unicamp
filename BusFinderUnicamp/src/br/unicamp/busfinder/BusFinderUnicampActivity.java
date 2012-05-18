@@ -1,23 +1,17 @@
 package br.unicamp.busfinder;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +54,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	
 	/* Lista para as coordenadas */
-	CoordList coordList = null;
 	ArrayList<String> coordenada = null;
 	ArrayList<String> rota = null;
 	
@@ -79,59 +72,9 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         
         
         
-        rota = new ArrayList<String>();
-        coordenada = new ArrayList<String>();
-        
-     // get the kml (XML) doc. And parse it to get the coordinates(direction
-    	// route).
-    	Document doc = null;
-    	HttpURLConnection urlConnection = null;
-    	URL url = null;
-
-    		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    		DocumentBuilder db;
-    		try {
-    			db = dbf.newDocumentBuilder();
-    			doc = db.parse(new InputSource(getAssets().open("Linha1.kml")));
-    		} catch (ParserConfigurationException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
-    		} catch (SAXException e) {
-    			// TODO Auto-generated catch block
-    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
-
-    			e.printStackTrace();
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
-
-    		}
-    		
-
-    		for (int i=0;i< doc.getElementsByTagName("coordinates").getLength()-1; i++){
-    			String x = doc.getElementsByTagName("coordinates").item(i).getTextContent();
-    			String a = x.replaceFirst("\n","").replaceAll(" ", "");
-    			coordenada.add(a);        		
-    		}
-
-    		String x = doc.getElementsByTagName("coordinates").item(doc.getElementsByTagName("coordinates").getLength()-1).getTextContent();
-    		String a = x.replaceFirst("\n","").replaceAll(" ", "");
-			String c[] = a.split("\n");
-    		for (String y : c){
-    			rota.add(y);
-    		} 
+       
 			
     		
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -166,7 +109,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.setStreetView(false);
                     map.getOverlays().clear();
                     map.invalidate();
-                    
                     DesenhaPontosOnibus("Linha2.kml");		
         		}
         		
@@ -232,7 +174,35 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 public void DesenhaPontosOnibus(String arquivo) {
     	
-        
+	 rota = new ArrayList<String>();
+     coordenada = new ArrayList<String>();
+     
+ 	Document doc = null;
+
+ 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+ 		DocumentBuilder db;
+ 			try {
+					db = dbf.newDocumentBuilder();
+					doc = db.parse(new InputSource(getAssets().open(arquivo)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+ 			
+ 		
+ 		
+
+ 		for (int i=0;i< doc.getElementsByTagName("coordinates").getLength()-1; i++){
+ 			String x = doc.getElementsByTagName("coordinates").item(i).getTextContent();
+ 			String a = x.replaceFirst("\n","").replaceAll(" ", "");
+ 			coordenada.add(a);        		
+ 		}
+
+ 		String z = doc.getElementsByTagName("coordinates").item(doc.getElementsByTagName("coordinates").getLength()-1).getTextContent();
+ 		String a = z.replaceFirst("\n","").replaceAll(" ", "");
+			String c[] = a.split("\n");
+ 		for (String y : c){
+ 			rota.add(y);
+ 		} 
       
         controller = map.getController();
         
@@ -250,11 +220,11 @@ public void DesenhaPontosOnibus(String arquivo) {
         List<OverlayItem> pontos = new ArrayList<OverlayItem>();
         		
         for (String p : coordenada){
-        	String c[] = p.split("\\,");
-        	x = (int)(Double.parseDouble(c[0]) * 1E6); 
-        	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
+        	String k[] = p.split("\\,");
+        	x = (int)(Double.parseDouble(k[0]) * 1E6); 
+        	y = (int)(Double.parseDouble(k[1]) * 1E6);
         	GeoPoint point = new GeoPoint(y, x);
-        	pontos.add(new OverlayItem(point,"p","xtotal"));
+        	pontos.add(new OverlayItem(point,p,"xtotal"));
         }
         
         Drawable imagem = getResources().getDrawable(R.drawable.mapa_pin);
@@ -263,29 +233,22 @@ public void DesenhaPontosOnibus(String arquivo) {
         
         
         for(String r : rota ){
-        	String c[] = r.split("\\,");
-        	x = (int)(Double.parseDouble(c[0]) * 1E6); 
-        	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
+        	String k[] = r.split("\\,");
+        	x = (int)(Double.parseDouble(k[0]) * 1E6); 
+        	y = (int)(Double.parseDouble(k[1]) * 1E6); 
         	GeoPoint point = new GeoPoint(y, x);
         	Route.add(point);   
    	
         } 
         
-        
-        
-        
+ 
         /* Centralizacao no ponto centra da cidade */
         //controller.setCenter(pointCB);
         controller.animateTo(pointCB);
         controller.setZoom(17);
         
-        /* Marcacao da lista de pontos */
+       
        Overlay overlayp;
-        /*for (GeoPoint o : Points){
-        	overlayp = new PointOverlay(o, map);
-        	map.getOverlays().add(overlayp);
-        } 
-        */
         ListIterator<GeoPoint> i = Route.listIterator();
         
         while (i.hasNext()){
@@ -302,7 +265,6 @@ public void DesenhaPontosOnibus(String arquivo) {
 				
 			
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				i.next();
 			}
         }

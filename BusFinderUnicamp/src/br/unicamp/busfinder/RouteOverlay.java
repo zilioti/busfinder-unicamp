@@ -1,22 +1,18 @@
 package br.unicamp.busfinder;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.Rect;
 
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
 public class RouteOverlay extends Overlay {
 	
-	private Paint paint = new Paint();
 	private GeoPoint point1, point2;
 	private MapView map;
 
@@ -36,11 +32,11 @@ public class RouteOverlay extends Overlay {
 		//A PARTIR DAQUI TO TENTANDO FAZER ALGO AI aueheuhhaauhaeuheauhea
 		 Paint   paint = new Paint();
 	        paint.setDither(true);
-	        paint.setColor(Color.BLUE);
+	        paint.setColor(Color.GREEN);
 	        paint.setStyle(Paint.Style.FILL_AND_STROKE);
 	        paint.setStrokeJoin(Paint.Join.ROUND);
 	        paint.setStrokeCap(Paint.Cap.ROUND);
-	        paint.setStrokeWidth(5);
+	        paint.setStrokeWidth(6);
 	        
 	        Point p1 = new Point();
 	        Point p2 = new Point();
