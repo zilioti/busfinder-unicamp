@@ -1,22 +1,28 @@
 package br.unicamp.busfinder;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,7 +47,9 @@ import com.google.android.maps.OverlayItem;
 
 public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
-    
+
+	
+	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
 	private static final int CENTER_LONGITUDE = (int) (-47.069729 * 1E6);
@@ -54,6 +62,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	/* Lista para as coordenadas */
 	CoordList coordList = null;
 	ArrayList<String> coordenada = null;
+	ArrayList<String> rota = null;
 	
 	private MapView map;
 	private MapController controller;
@@ -65,6 +74,69 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         setContentView(R.layout.main);
         
        
+        
+        
+        
+        
+        
+        rota = new ArrayList<String>();
+        coordenada = new ArrayList<String>();
+        
+     // get the kml (XML) doc. And parse it to get the coordinates(direction
+    	// route).
+    	Document doc = null;
+    	HttpURLConnection urlConnection = null;
+    	URL url = null;
+
+    		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    		DocumentBuilder db;
+    		try {
+    			db = dbf.newDocumentBuilder();
+    			doc = db.parse(new InputSource(getAssets().open("Linha1.kml")));
+    		} catch (ParserConfigurationException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
+    		} catch (SAXException e) {
+    			// TODO Auto-generated catch block
+    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
+
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			Log.d("aaaaaaXXXXXX", "aaaaaaXXXXX");
+
+    		}
+    		
+
+    		for (int i=0;i< doc.getElementsByTagName("coordinates").getLength()-1; i++){
+    			String x = doc.getElementsByTagName("coordinates").item(i).getTextContent();
+    			String a = x.replaceFirst("\n","").replaceAll(" ", "");
+    			coordenada.add(a);        		
+    		}
+
+    		String x = doc.getElementsByTagName("coordinates").item(doc.getElementsByTagName("coordinates").getLength()-1).getTextContent();
+    		String a = x.replaceFirst("\n","").replaceAll(" ", "");
+			String c[] = a.split("\n");
+    		for (String y : c){
+    			rota.add(y);
+    		} 
+			
+    		
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener((OnSharedPreferenceChangeListener) this);
         
@@ -161,28 +233,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 public void DesenhaPontosOnibus(String arquivo) {
     	
         
-        /* Leitura e extracao das coordenadas do arquivo .kml */
-        try {
-
-        	/** Handling XML */
-        	SAXParserFactory spf = SAXParserFactory.newInstance();
-        	SAXParser sp = spf.newSAXParser();
-        	XMLReader xr = sp.getXMLReader();
-
-        	InputSource is = new InputSource(getAssets().open(arquivo));
-        	
-        	KMLHandler myXMLHandler = new KMLHandler();
-        	xr.setContentHandler(myXMLHandler);
-        	xr.parse(is);
-
-        	} catch (Exception e) {
-        	System.out.println("XML Pasing Excpetion = " + e);
-        }
-        
-        /* Lista de coordenadas */
-        coordList = KMLHandler.coordList;
-        coordenada = coordList.getCoordenada();
-        
+      
         controller = map.getController();
         
         /* Definicao do ponto centra da cidade */
@@ -195,39 +246,30 @@ public void DesenhaPontosOnibus(String arquivo) {
         int x;
         int y;
         
-        String ultimo = coordenada.get(coordenada.size()-2);
         
         List<OverlayItem> pontos = new ArrayList<OverlayItem>();
         		
-        //coordenada.remove(coordenada.size()-2);
-        coordenada.remove(coordenada.size()-1);
         for (String p : coordenada){
         	String c[] = p.split("\\,");
         	x = (int)(Double.parseDouble(c[0]) * 1E6); 
         	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
         	GeoPoint point = new GeoPoint(y, x);
         	pontos.add(new OverlayItem(point,"p","xtotal"));
-        	//Points.add(point);        	
         }
         
         Drawable imagem = getResources().getDrawable(R.drawable.mapa_pin);
         ImagensOverlay pontosOverlay = new ImagensOverlay(this,pontos,imagem);
         map.getOverlays().add(pontosOverlay);
         
-       // Log.d("aaaa",ultimo);
-        
-       /* String rota[] = ultimo.split("\n");
-        
         
         for(String r : rota ){
         	String c[] = r.split("\\,");
-        	//Log.d("aaaa",c[1]);
         	x = (int)(Double.parseDouble(c[0]) * 1E6); 
         	y = (int)(Double.parseDouble(c[1]) * 1E6); // ta com pau no ponto 14 na coord x
         	GeoPoint point = new GeoPoint(y, x);
         	Route.add(point);   
    	
-        } */
+        } 
         
         
         
@@ -238,8 +280,8 @@ public void DesenhaPontosOnibus(String arquivo) {
         controller.setZoom(17);
         
         /* Marcacao da lista de pontos */
-      /*  Overlay overlayp;
-        for (GeoPoint o : Points){
+       Overlay overlayp;
+        /*for (GeoPoint o : Points){
         	overlayp = new PointOverlay(o, map);
         	map.getOverlays().add(overlayp);
         } 
@@ -255,8 +297,8 @@ public void DesenhaPontosOnibus(String arquivo) {
         		
         		Log.d("bbbb",s.toString());
 				
-        		//overlayp = new RouteOverlay(s, e, map);
-				//map.getOverlays().add(overlayp);
+        		overlayp = new RouteOverlay(s, e, map);
+				map.getOverlays().add(overlayp);
 				
 			
 			} catch (Exception e) {
@@ -317,6 +359,6 @@ public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
 	// TODO Auto-generated method stub
 	
 }
-
+	
 
 }
