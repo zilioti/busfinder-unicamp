@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, BusFinderUnicampActivity!</string>
     <string name="app_name">BusFinderUnicamp</string>
+    
+    <!-- Preferencias visualizacão  --> 
+    <string name="preference_view">Visualizacão</string>
+    <string name="map">Mapa</string>
+    <string name="summary_map">Escolha tipo de visualicão do mapa</string>
+    <string name="focus">Foco</string>
+    <string name="summary_focus">Escolha tipo de foco no mapa</string>
+    <string name="title_option_preference">Opcoes do mapa</string>
+    <string name="summary_option_preference">Configure a visualizacao do mapa</string>
+    <string name="title_route_preference">Rota</string>
+    <string name="summary_route_preference">Marque caso deseje que a rota da linha seja desenhada</string>
+    <string name="title_zoom_preference">Zoom</string>
+    <string name="summary_zoom_preference">Mostrat botões de zoom no mapa</string>
+    <string name="title_scale_preference">Escala</string>
+    <string name="summary_scale_preference">Mostrar barra de escala no mapa</string>
+                
+    <!-- Preferencias favorito  --> 
+    <string name="preference_favorites">Favoritos</string>
+    <string name="line">Linha</string>
+    <string name="summary_line">Escolha a linha de ônibus</string>    
+    
+    <!-- Preferencias tema  --> 
+    <string name="preference_layout">Temas </string>
+    <string name="theme">Tema dos pinos</string>
+    <string name="summary_theme">Escolha um tema para os pinos</string>    
+    
+    <!-- Preferencias referencia  --> 
+    <string name="preference_ref">Referências </string>
+    <string name="title_circular_preference">Ônibus Circular</string>
+    <string name="summary_circular_preference">Site da prefeitura - fonte dos dados</string>
+    
 
 </resources>

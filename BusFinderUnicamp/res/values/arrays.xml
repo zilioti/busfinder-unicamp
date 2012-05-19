@@ -1,18 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <!-- Used in app/menu examples -->
-    <string-array name="entries_list_preference">
-        <item>Alpha Option 01</item>
-        <item>Beta Option 02</item>
-        <item>Charlie Option 03</item>  
+    <!-- Lista de tipos de mapas -->
+    <string-array name="entries_list_mappreferences">
+        <item>Trânsito</item>
+        <item>Satélite</item>
     </string-array>
 
-    <!-- Used in app/menu examples -->
-    <string-array name="entryvalues_list_preference">
-        <item>alpha</item>
-        <item>beta</item>
-        <item>charlie</item>  
+    <!-- Valores do mapa -->
+    <string-array name="entryvalues_list_mappreferences">
+        <item>traffic</item>
+        <item>satellite</item>
     </string-array>
+    
+        <!-- Lista de tipos de foco -->
+    <string-array name="entries_list_focuspreferences">
+        <item>Você</item>
+        <item>Ônibus</item>
+        <item>Centro Unicamp</item>
+    </string-array>
+
+    <!-- Valores do foco -->
+    <string-array name="entryvalues_list_focuspreferences">
+        <item>you</item>
+        <item>bus</item>
+        <item>unicamp</item>
+    </string-array>
+    
+    <!-- Lista de linhas -->
+    <string-array name="entries_list_linepreferences">
+        <item>Linha 1</item>
+        <item>Linha 2</item>
+        <item>Linha 2 - Via FEC</item>
+        <item>Linha 2 - Via Museu</item>
+        <item>Linha Noturna</item>
+    </string-array>
+
+    <!-- Valores das linhas -->
+    <string-array name="entryvalues_list_linepreferences">
+        <item>line1</item>
+        <item>line2</item>
+        <item>line1fec</item>
+        <item>line2museum</item>
+        <item>linenight</item>
+    </string-array>
+
+    <!-- Lista de temas -->
+    <string-array name="entries_list_themepreferences">
+        <item>Padrão</item>
+        <item>Mário</item>
+    </string-array>
+
+    <!-- Valores das linhas -->
+    <string-array name="entryvalues_list_themepreferences">
+        <item>pattern</item>
+        <item>mario</item>
+    </string-array> 
+    
     
 </resources>

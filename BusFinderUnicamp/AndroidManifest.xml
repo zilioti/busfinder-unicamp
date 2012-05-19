@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".PrefsActivity" android:label="string titulo" />
+        <activity android:name=".PrefsActivity" android:label="Preferências" />
     </application>
 
 </manifest>
