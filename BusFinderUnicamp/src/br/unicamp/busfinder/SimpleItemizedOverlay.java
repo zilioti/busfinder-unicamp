@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.maps.MapView;
@@ -26,9 +27,9 @@ import com.google.android.maps.OverlayItem;
 
 import br.unicamp.busfinder.BalloonItemizedOverlay;
 
-public class SimpleItemizedOverlay extends BalloonItemizedOverlay<OverlayItem> {
+public class SimpleItemizedOverlay extends BalloonItemizedOverlay<CustomOverlayItem> {
 
-	private ArrayList<OverlayItem> m_overlays = new ArrayList<OverlayItem>();
+	private ArrayList<CustomOverlayItem> m_overlays = new ArrayList<CustomOverlayItem>();
 	private Context c;
 
 	public SimpleItemizedOverlay(Drawable defaultMarker, MapView mapView) {
@@ -36,23 +37,33 @@ public class SimpleItemizedOverlay extends BalloonItemizedOverlay<OverlayItem> {
 		c = mapView.getContext();
 	}
 
-	public void addOverlay(OverlayItem overlay) {
+	public void addOverlay(CustomOverlayItem overlay) {
 	    m_overlays.add(overlay);
 	    populate();
 	}
+	
+	protected CustomOverlayItem saveItem(int i, CustomOverlayItem overlay) {
+		
+		m_overlays.set(i, overlay);
+		
+		return m_overlays.get(i);
+		
+	}
+	
 
 	@Override
-	protected OverlayItem createItem(int i) {
+	protected CustomOverlayItem createItem(int i) {
 		return m_overlays.get(i);
 	}
-
+	
+	
 	@Override
 	public int size() {
 		return m_overlays.size();
 	}
 
 	@Override
-	protected boolean onBalloonTap(int index, OverlayItem item) {
+	protected boolean onBalloonTap(int index, CustomOverlayItem item) {
 		Toast.makeText(c, "onBalloonTap for overlay index " + index,
 				Toast.LENGTH_LONG).show();
 		return true;

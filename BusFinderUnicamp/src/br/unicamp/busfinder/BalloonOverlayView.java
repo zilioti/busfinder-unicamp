@@ -33,12 +33,17 @@ import com.google.android.maps.OverlayItem;
  * @author Jeff Gilfelt
  *
  */
-public class BalloonOverlayView<Item extends OverlayItem> extends FrameLayout {
+
+
+public class BalloonOverlayView<Item extends CustomOverlayItem> extends FrameLayout {
 
 	private LinearLayout layout;
 	private TextView title;
 	private TextView snippet;
-
+	private TextView snippet2;
+	
+	
+	
 	/**
 	 * Create a new BalloonOverlayView.
 	 * 
@@ -64,6 +69,8 @@ public class BalloonOverlayView<Item extends OverlayItem> extends FrameLayout {
 		addView(layout, params);
 
 	}
+	
+	
 
 	/**
 	 * Inflate and initialize the BalloonOverlayView UI. Override this method
@@ -79,41 +86,51 @@ public class BalloonOverlayView<Item extends OverlayItem> extends FrameLayout {
 		View v = inflater.inflate(R.layout.balloon_overlay, parent);
 		title = (TextView) v.findViewById(R.id.balloon_item_title);
 		snippet = (TextView) v.findViewById(R.id.balloon_item_snippet);
+		snippet2 = (TextView) v.findViewById(R.id.balloon_item_snippet2);
 		
 	}
 	
 	/**
 	 * Sets the view data from a given overlay item.
 	 * 
-	 * @param item - The overlay item containing the relevant view data. 
+	 * @param currentFocusedItem - The overlay item containing the relevant view data. 
 	 */
-	public void setData(Item item) {
+	public void setData(CustomOverlayItem currentFocusedItem) {
 		layout.setVisibility(VISIBLE);
-		setBalloonData(item, layout);
+		setBalloonData(currentFocusedItem, layout);
 	}
 	
 	/**
 	 * Sets the view data from a given overlay item. Override this method to create
 	 * your own data/view mappings.
 	 * 
-	 * @param item - The overlay item containing the relevant view data.
+	 * @param currentFocusedItem - The overlay item containing the relevant view data.
 	 * @param parent - The parent layout for this BalloonOverlayView.
 	 */
-	protected void setBalloonData(Item item, ViewGroup parent) {
-		if (item.getTitle() != null) {
+	protected void setBalloonData(CustomOverlayItem currentFocusedItem, ViewGroup parent) {
+		if (currentFocusedItem.getTitle() != null) {
 			title.setVisibility(VISIBLE);
-			title.setText(item.getTitle());
+			title.setText(currentFocusedItem.getTitle());
 		} else {
 			title.setText("");
 			title.setVisibility(GONE);
 		}
-		if (item.getSnippet() != null) {
+		if (currentFocusedItem.getSnippet() != null) {
 			snippet.setVisibility(VISIBLE);
-			snippet.setText(item.getSnippet());
+			snippet.setText(currentFocusedItem.getSnippet());
 		} else {
 			snippet.setText("");
 			snippet.setVisibility(GONE);
 		}
+		if (currentFocusedItem.getSnippet2() != null) {
+			snippet2.setVisibility(VISIBLE);
+			snippet2.setText(currentFocusedItem.getSnippet2());
+		} else {
+			snippet2.setText("");
+			snippet2.setVisibility(GONE);
+		}
+		
+		
 	}
 	
 	private class LimitLinearLayout extends LinearLayout {
@@ -140,5 +157,7 @@ public class BalloonOverlayView<Item extends OverlayItem> extends FrameLayout {
 	        super.onMeasure(adjustedWidthMeasureSpec, heightMeasureSpec);
 	    }
 	}
+
+	
 
 }

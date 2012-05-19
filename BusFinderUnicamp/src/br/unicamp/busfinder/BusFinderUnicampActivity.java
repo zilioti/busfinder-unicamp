@@ -57,16 +57,16 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	boolean rota_ativada;
 	
-	private String[] linhas = { "Linha 1 : Sentido Anti-Horário", 
-								"Linha 2 : Sentido Horário", 
-								"Linha 2 - Via FEC : Sentido Horário", 
-								"Linha 2 - Via Museu : Sentido Horário", 
-								"Linha Noturna : Sentido Horário"
+	private String[] linhas = { "Linha 1 : Sentido Anti-Horï¿½rio", 
+								"Linha 2 : Sentido Horï¿½rio", 
+								"Linha 2 - Via FEC : Sentido Horï¿½rio", 
+								"Linha 2 - Via Museu : Sentido Horï¿½rio", 
+								"Linha Noturna : Sentido Horï¿½rio"
 							   };
 	
 	
 	/* Lista para as coordenadas */
-	ArrayList<String> coordenada = null;
+	ArrayList<PontoOnibus> coordenada = null;
 	ArrayList<String> rota = null;
 	
 	private MapView map;
@@ -217,7 +217,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	public void DesenhaPontosOnibus(String arquivo) {
     	
 		rota = new ArrayList<String>(); //lista com as coordenadas da rota
-		coordenada = new ArrayList<String>(); //lista com as coordenadas dos pontos de onibus
+		coordenada = new ArrayList<PontoOnibus>(); //lista com as coordenadas dos pontos de onibus
      
 		
 		/* faz o PARSE do ARQUIVO utilizando DOM */
@@ -233,11 +233,14 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 			e.printStackTrace();
 		}
  			
- 		for (int i=0;i< doc.getElementsByTagName("coordinates").getLength()-1; i++){
- 			String x = doc.getElementsByTagName("coordinates").item(i).getTextContent();
- 			String a = x.replaceFirst("\n","").replaceAll(" ", "");
- 			coordenada.add(a);        		
- 		}
+		for (int i = 0; i < doc.getElementsByTagName("Placemark").getLength() - 1; i++) {
+			String x = doc.getElementsByTagName("Placemark").item(i).getChildNodes().item(1).getTextContent();
+			String y = doc.getElementsByTagName("Placemark").item(i).getChildNodes().item(7).getTextContent();
+			String a = y.replaceFirst("\n", "").replaceAll(" ", "");
+			PontoOnibus b = new PontoOnibus(a,x,false);
+			
+			coordenada.add(b);
+		}
 
  		String z = doc.getElementsByTagName("coordinates").item(doc.getElementsByTagName("coordinates").getLength()-1).getTextContent();
  		String a = z.replaceFirst("\n","").replaceAll(" ", "");
@@ -255,18 +258,19 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         List<OverlayItem> pontos = new ArrayList<OverlayItem>();
         	
         /* adiciona os pontos na lista itemizedOverlay */
-        for (String p : coordenada){
-        	String k[] = p.split("\\,");
-        	int x = (int)(Double.parseDouble(k[0]) * 1E6); 
-        	int y = (int)(Double.parseDouble(k[1]) * 1E6);
-        	GeoPoint point = new GeoPoint(y, x);
-        	pontos.add(new OverlayItem(point,p,"xtotal"));
-        	itemizedOverlay.addOverlay(new OverlayItem(point,p,"xtotal"));
+        for (PontoOnibus p : coordenada) {
+			String k[] = p.coordenada.split("\\,");
+			int x = (int) (Double.parseDouble(k[0]) * 1E6);
+			int y = (int) (Double.parseDouble(k[1]) * 1E6);
+			GeoPoint point = new GeoPoint(y, x);
+			// pontos.add(new OverlayItem(point,p,"xtotal"));
+			itemizedOverlay.addOverlay(new CustomOverlayItem(point, p.nomeponto,
+					"7 min prÃ³ximo Ã´nibus", "10 min Ã´nibus seguinte",p.favorito));
         }
         
         mapOverlays.add(itemizedOverlay);
         
-       /*só desenha a rota se estiver ativada nas preferencias */
+       /*sï¿½ desenha a rota se estiver ativada nas preferencias */
        if (rota_ativada){
         
     	   /*adiciona as coordenadas da rota em ROUTE */
@@ -429,12 +433,25 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 		}
 		
 		
-		/*OPCOES de Tema dos Pinos */
-		
-
+		/*OPCOES de Tema dos Pinos */		
 		
 		
 	}
+	
+	public class PontoOnibus {
+
+		String coordenada;
+		String nomeponto;
+		boolean favorito;
+
+		PontoOnibus(String coord, String ponto, boolean fav) {
+			this.coordenada = coord;
+			this.nomeponto = ponto;
+			this.favorito = fav;
+		}
+
+	}
+
 
 
 }/*fim da activity*/

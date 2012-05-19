@@ -17,8 +17,10 @@ package br.unicamp.busfinder;
 
 import java.util.List;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,15 +40,18 @@ import com.google.android.maps.OverlayItem;
  * 
  * @author Jeff Gilfelt
  */
-public abstract class BalloonItemizedOverlay<Item extends OverlayItem> extends ItemizedOverlay<Item> {
+public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> extends ItemizedOverlay<Item> {
 
 	private static final long BALLOON_INFLATION_TIME = 300;
 	private static Handler handler = new Handler();
 	
 	private MapView mapView;
 	private BalloonOverlayView<Item> balloonView;
+	
 	private View clickRegion;
 	private View closeRegion;
+	private View buttonRegion;
+	
 	private int viewOffset;
 	final MapController mc;
 	private Item currentFocusedItem;
@@ -55,6 +60,7 @@ public abstract class BalloonItemizedOverlay<Item extends OverlayItem> extends I
 	private boolean showClose = true;
 	private boolean showDisclosure = false;
 	private boolean snapToCenter = true;
+	private boolean showFavorite = false;
 	
 	private static boolean isInflating = false;
 	
@@ -121,6 +127,7 @@ public abstract class BalloonItemizedOverlay<Item extends OverlayItem> extends I
 		currentFocusedIndex = index;
 		currentFocusedItem = createItem(index);
 		setLastFocusedIndex(index);
+		
 		
 		onBalloonOpen(index);
 		createAndDisplayBalloonOverlay();
@@ -261,6 +268,9 @@ public abstract class BalloonItemizedOverlay<Item extends OverlayItem> extends I
 			clickRegion = (View) balloonView.findViewById(R.id.balloon_inner_layout);
 			clickRegion.setOnTouchListener(createBalloonTouchListener());
 			closeRegion = (View) balloonView.findViewById(R.id.balloon_close);
+			buttonRegion = (View) balloonView.findViewById(R.id.button1);
+			
+
 			if (closeRegion != null) {
 				if (!showClose) {
 					closeRegion.setVisibility(View.GONE);
@@ -271,6 +281,21 @@ public abstract class BalloonItemizedOverlay<Item extends OverlayItem> extends I
 							hideBalloon();	
 						}
 					});
+					buttonRegion.setOnClickListener(new View.OnClickListener() {
+			             public void onClick(View v) {
+			            	 if(!currentFocusedItem.mfavorito){
+			                 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_on);
+			                 currentFocusedItem.mfavorito = true;
+			                 
+			            	 }
+			            	 else {
+			            		 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_off);
+			            		 currentFocusedItem.mfavorito = false;
+			            		
+			            	 }
+			             }
+					});
+					
 				}
 			}
 			if (showDisclosure && !showClose) {

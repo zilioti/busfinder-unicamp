@@ -41,6 +41,23 @@
                 android:text="balloon_item_snippet"
                 android:textColor="@android:color/secondary_text_light"
                 android:textSize="12dip" />
+            
+            <TextView
+                android:id="@+id/balloon_item_snippet2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="balloon_item_snippet2"
+                android:textColor="@android:color/secondary_text_light"
+                android:textSize="12dip" />
+            
+           <Button
+               android:id="@+id/button1"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="right"
+               android:layout_weight="1"
+               android:background="@android:drawable/btn_star_big_off" />
+            
         </LinearLayout>
 
         <ImageView
@@ -50,6 +67,8 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/balloon_disclosure"
             android:visibility="gone" />
+
+        
     </LinearLayout>
 
     <ImageView
@@ -61,5 +80,6 @@
         android:paddingRight="5dip"
         android:paddingTop="5dip"
         android:src="@drawable/balloon_overlay_close" />
+
 
 </LinearLayout>
