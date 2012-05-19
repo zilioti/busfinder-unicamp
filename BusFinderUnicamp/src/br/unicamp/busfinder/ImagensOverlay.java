@@ -34,7 +34,7 @@ public class ImagensOverlay extends ItemizedOverlay {
 	protected boolean onTap(int i) {
 		OverlayItem overlayItem = imagens.get(i);
 		String texto = overlayItem.getTitle() + " - " + overlayItem.getSnippet();
-		Toast.makeText(context, texto,Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, texto,Toast.LENGTH_LONG).show();
 		return(true);
 	}
 }

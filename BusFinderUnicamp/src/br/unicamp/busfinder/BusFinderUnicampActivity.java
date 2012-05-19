@@ -42,7 +42,12 @@ import com.google.android.maps.OverlayItem;
 public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
 
-	
+	MapView mapView;
+	List<Overlay> mapOverlays;
+	Drawable drawable;
+	Drawable drawable2;
+	SimpleItemizedOverlay itemizedOverlay;
+	SimpleItemizedOverlay itemizedOverlay2;
 	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
@@ -69,12 +74,13 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
        
         
         
+  
         
         
-        
-       
-			
-    		
+        mapView = (MapView) findViewById(R.id.map);
+		mapView.setBuiltInZoomControls(true);
+
+		mapOverlays = mapView.getOverlays();
         
         
         
@@ -110,7 +116,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.getOverlays().clear();
                     map.invalidate();
                     DesenhaPontosOnibus("Linha2.kml");		
-        		}
+        		} 
         		
         	}
 
@@ -130,7 +136,30 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         map.setTraffic(false);
         map.setStreetView(false);
        
-        DesenhaPontosOnibus("Linha1.kml");
+        DesenhaPontosOnibus("Linha1.kml"); 
+        
+        if (savedInstanceState == null) {
+
+			controller = mapView.getController();
+			GeoPoint pointCB = new 
+	        		GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
+			controller.animateTo(pointCB);
+			controller.setZoom(16);
+
+		} else {
+
+			// example restoring focused state of overlays
+			int focused;
+			focused = savedInstanceState.getInt("focused_1", -1);
+			if (focused >= 0) {
+				itemizedOverlay.setFocus(itemizedOverlay.getItem(focused));
+			}
+			focused = savedInstanceState.getInt("focused_2", -1);
+			if (focused >= 0) {
+				itemizedOverlay2.setFocus(itemizedOverlay2.getItem(focused));
+			}
+
+		}
     }
     
     
@@ -153,7 +182,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.menu, menu);
+	    inflater.inflate(R.menu.menumapa, menu);
 	    return true;
 	}
 	
@@ -161,11 +190,11 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.file:
+	        case R.id.pref:
 	        	startActivity(new Intent(this, PrefsActivity.class));
 	            return true;
-	        case R.id.create_new:
-	            return true;
+	       // case R.id.create_new:
+	        //    return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -217,6 +246,19 @@ public void DesenhaPontosOnibus(String arquivo) {
         int y;
         
         
+        
+        
+        // first overlay
+ 		drawable = getResources().getDrawable(R.drawable.mapa_pin);
+ 		itemizedOverlay = new SimpleItemizedOverlay(drawable, mapView);
+
+
+ 		
+ 		
+        
+        
+        
+        
         List<OverlayItem> pontos = new ArrayList<OverlayItem>();
         		
         for (String p : coordenada){
@@ -225,11 +267,13 @@ public void DesenhaPontosOnibus(String arquivo) {
         	y = (int)(Double.parseDouble(k[1]) * 1E6);
         	GeoPoint point = new GeoPoint(y, x);
         	pontos.add(new OverlayItem(point,p,"xtotal"));
+        	itemizedOverlay.addOverlay(new OverlayItem(point,p,"xtotal"));
         }
         
         Drawable imagem = getResources().getDrawable(R.drawable.mapa_pin);
         ImagensOverlay pontosOverlay = new ImagensOverlay(this,pontos,imagem);
-        map.getOverlays().add(pontosOverlay);
+       // map.getOverlays().add(pontosOverlay);
+        mapOverlays.add(itemizedOverlay);
         
         
         for(String r : rota ){
@@ -322,5 +366,20 @@ public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
 	
 }
 	
+
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+
+	// example saving focused state of overlays
+	if (itemizedOverlay.getFocus() != null) outState.putInt("focused_1", itemizedOverlay.getLastFocusedIndex());
+	super.onSaveInstanceState(outState);
+
+}
+
+public void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    // your stuff or nothing
+}
+
 
 }
