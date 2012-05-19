@@ -50,6 +50,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	String arquivo;
 	Spinner combo;
 	MyLocationOverlay ondeEstou;
+	int i;
 	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
