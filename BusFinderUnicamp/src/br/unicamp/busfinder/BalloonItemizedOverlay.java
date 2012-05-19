@@ -136,6 +136,18 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 			mc.animateTo(currentFocusedItem.getPoint());
 		}
 		
+		
+		 if(currentFocusedItem.mfavorito){
+             buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_on);
+             
+             
+        	 }
+        	 else {
+        		 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_off);
+        	
+        		
+        	 }
+		
 		return true;
 	}
 
