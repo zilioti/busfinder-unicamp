@@ -40,7 +40,7 @@
     <string-array name="entryvalues_list_linepreferences">
         <item>line1</item>
         <item>line2</item>
-        <item>line1fec</item>
+        <item>line2fec</item>
         <item>line2museum</item>
         <item>linenight</item>
     </string-array>

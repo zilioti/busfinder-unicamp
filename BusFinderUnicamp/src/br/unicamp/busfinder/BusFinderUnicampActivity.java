@@ -42,12 +42,12 @@ import com.google.android.maps.OverlayItem;
 public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
 
-	MapView mapView;
 	List<Overlay> mapOverlays;
 	Drawable drawable;
-	Drawable drawable2;
 	SimpleItemizedOverlay itemizedOverlay;
-	SimpleItemizedOverlay itemizedOverlay2;
+	
+	String arquivo;
+	Spinner combo;
 	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
@@ -55,7 +55,14 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	SharedPreferences prefs;
 	
-	private String[] linhas = { "Linha 1", "Linha 2"};
+	boolean rota_ativada;
+	
+	private String[] linhas = { "Linha 1 : Sentido Anti-Horário", 
+								"Linha 2 : Sentido Horário", 
+								"Linha 2 - Via FEC : Sentido Horário", 
+								"Linha 2 - Via Museu : Sentido Horário", 
+								"Linha Noturna : Sentido Horário"
+							   };
 	
 	
 	/* Lista para as coordenadas */
@@ -65,84 +72,91 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	private MapView map;
 	private MapController controller;
 	
-    /** Called when the activity is first created. */
+   
+	
+	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-       
-        
-        
-  
-        
-        
-        mapView = (MapView) findViewById(R.id.map);
-		mapView.setBuiltInZoomControls(true);
 
-		mapOverlays = mapView.getOverlays();
+        /* Inicializa o mapa */
+		map = (MapView) findViewById(R.id.map);
+        map.setBuiltInZoomControls(true);
+        mapOverlays = map.getOverlays();
+        controller = map.getController();
+        GeoPoint pointCB = new GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
+        drawable = getResources().getDrawable(R.drawable.mapa_pin);
         
+        /* inicializa o spinner */
+        combo = (Spinner) findViewById(R.id.linhas);
+        ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, linhas);
+        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        combo.setAdapter(adaptador);
         
-        
-        
-        
+        /* inicializa as preferencias do usuario, obs: em tempo real */
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener((OnSharedPreferenceChangeListener) this);
+        inicializarListaPrefs();
         
+        /* GPS */
         Location loc = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
         getLocationManager().requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
         
         
-        final Spinner combo = (Spinner) findViewById(R.id.linhas);
-        ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, linhas);
-        adaptador.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        combo.setAdapter(adaptador);
+       /* Funcao que faz o Parse dos arquivos KML e desenha os pontos de onibus no mapa */
+        DesenhaPontosOnibus(arquivo); 
         
+        
+        
+        /* SPINNER com as linhas de onibus quando clicado */  
         combo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        	
         	public void onItemSelected(AdapterView<?> parent,View v, int posicao, long id){
         		
-        		if (posicao == 0) {
-        		map.setSatellite(false);
-                map.setTraffic(true);
-                map.setStreetView(false);
-                map.getOverlays().clear();
-                map.invalidate();
-                DesenhaPontosOnibus("Linha1.kml");
-        		} else if (posicao == 1){
-        			map.setSatellite(true);
-                    map.setTraffic(false);
-                    map.setStreetView(false);
+        		switch (posicao) {
+        		case 0:
                     map.getOverlays().clear();
                     map.invalidate();
-                    DesenhaPontosOnibus("Linha2.kml");		
-        		} 
+                    arquivo = "Linha1.kml";
+                    DesenhaPontosOnibus(arquivo);
+    	            break;
+    	            
+        		case 1:
+                    map.getOverlays().clear();
+                    map.invalidate();
+                    arquivo = "Linha2.kml";
+                    DesenhaPontosOnibus(arquivo);	
+                    break;
+        		case 2:
+                    break;
+        		case 3:
+                    break;
+        		case 4:
+                    break;
+                
+    	       
+    	        default:
+                    map.getOverlays().clear();
+                    map.invalidate();
+                    DesenhaPontosOnibus("Linha1.kml");
+    	            break;
         		
+        		}
+    	            
+        	
         	}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
-				
-			}
-        	
+				if (arquivo.equals("Linha1.kml")) combo.setSelection(0);
+				if (arquivo.equals("Linha2.kml")) combo.setSelection(1);
+			}	
 		});
         
-        map = (MapView) findViewById(R.id.map);
-        map.setBuiltInZoomControls(true);
-        
-        /* Mapa como de trï¿½nsito */
-        map.setSatellite(true);
-        map.setTraffic(false);
-        map.setStreetView(false);
-       
-        DesenhaPontosOnibus("Linha1.kml"); 
-        
+        /* verificar aqui oque faz!!!!!!!!!!!!!!!!! */
         if (savedInstanceState == null) {
 
-			controller = mapView.getController();
-			GeoPoint pointCB = new 
-	        		GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
+			controller = map.getController();
 			controller.animateTo(pointCB);
 			controller.setZoom(16);
 
@@ -155,27 +169,25 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 				itemizedOverlay.setFocus(itemizedOverlay.getItem(focused));
 			}
 			focused = savedInstanceState.getInt("focused_2", -1);
-			if (focused >= 0) {
-				itemizedOverlay2.setFocus(itemizedOverlay2.getItem(focused));
-			}
 
 		}
+        
+        /* escuta a funcao quando alguma preferencia eh alterada */
+        prefs.registerOnSharedPreferenceChangeListener(prefListener);
     }
     
     
-    
+
     @Override
     protected void onStart() {
     	// TODO Auto-generated method stub
-    	super.onStart();
-        
+    	super.onStart(); 
              
     }
     
-    
 	@Override
 	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
+		/* verdadeiro pois a aplicacao mostra a rota */
 		return true;
 	}
 	
@@ -186,40 +198,41 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	    return true;
 	}
 	
+	/* MENU da aplicacao */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
+	    
 	    switch (item.getItemId()) {
-	        case R.id.pref:
+	        
+	    case R.id.pref:
 	        	startActivity(new Intent(this, PrefsActivity.class));
 	            return true;
-	       // case R.id.create_new:
-	        //    return true;
+
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
 	
 	
-public void DesenhaPontosOnibus(String arquivo) {
+	public void DesenhaPontosOnibus(String arquivo) {
     	
-	 rota = new ArrayList<String>();
-     coordenada = new ArrayList<String>();
+		rota = new ArrayList<String>(); //lista com as coordenadas da rota
+		coordenada = new ArrayList<String>(); //lista com as coordenadas dos pontos de onibus
      
- 	Document doc = null;
-
+		
+		/* faz o PARSE do ARQUIVO utilizando DOM */
+		Document doc = null;
  		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
  		DocumentBuilder db;
- 			try {
-					db = dbf.newDocumentBuilder();
-					doc = db.parse(new InputSource(getAssets().open(arquivo)));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+ 		try {
  			
- 		
- 		
-
+			db = dbf.newDocumentBuilder();
+			doc = db.parse(new InputSource(getAssets().open(arquivo)));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+ 			
  		for (int i=0;i< doc.getElementsByTagName("coordinates").getLength()-1; i++){
  			String x = doc.getElementsByTagName("coordinates").item(i).getTextContent();
  			String a = x.replaceFirst("\n","").replaceAll(" ", "");
@@ -231,108 +244,78 @@ public void DesenhaPontosOnibus(String arquivo) {
 			String c[] = a.split("\n");
  		for (String y : c){
  			rota.add(y);
- 		} 
-      
-        controller = map.getController();
+ 		}  
+ 		doc = null;
+ 		/*FIM do PARSE devolvendo a lista de coordenadas e rotas com as latitudes e longitudes dos pontos de onibus */
         
-        /* Definicao do ponto centra da cidade */
-        GeoPoint pointCB = new 
-        		GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
-        ArrayList<GeoPoint> Points = new ArrayList<GeoPoint>();
+        
+ 		
         ArrayList<GeoPoint> Route = new ArrayList<GeoPoint>();
-        
-        /* Definicao da lista de pontos ao redor */
-        int x;
-        int y;
-        
-        
-        
-        
-        // first overlay
- 		drawable = getResources().getDrawable(R.drawable.mapa_pin);
- 		itemizedOverlay = new SimpleItemizedOverlay(drawable, mapView);
-
-
- 		
- 		
-        
-        
-        
-        
+ 		itemizedOverlay = new SimpleItemizedOverlay(drawable, map);       
         List<OverlayItem> pontos = new ArrayList<OverlayItem>();
-        		
+        	
+        /* adiciona os pontos na lista itemizedOverlay */
         for (String p : coordenada){
         	String k[] = p.split("\\,");
-        	x = (int)(Double.parseDouble(k[0]) * 1E6); 
-        	y = (int)(Double.parseDouble(k[1]) * 1E6);
+        	int x = (int)(Double.parseDouble(k[0]) * 1E6); 
+        	int y = (int)(Double.parseDouble(k[1]) * 1E6);
         	GeoPoint point = new GeoPoint(y, x);
         	pontos.add(new OverlayItem(point,p,"xtotal"));
         	itemizedOverlay.addOverlay(new OverlayItem(point,p,"xtotal"));
         }
         
-        Drawable imagem = getResources().getDrawable(R.drawable.mapa_pin);
-        ImagensOverlay pontosOverlay = new ImagensOverlay(this,pontos,imagem);
-       // map.getOverlays().add(pontosOverlay);
         mapOverlays.add(itemizedOverlay);
         
+       /*só desenha a rota se estiver ativada nas preferencias */
+       if (rota_ativada){
         
-        for(String r : rota ){
-        	String k[] = r.split("\\,");
-        	x = (int)(Double.parseDouble(k[0]) * 1E6); 
-        	y = (int)(Double.parseDouble(k[1]) * 1E6); 
-        	GeoPoint point = new GeoPoint(y, x);
-        	Route.add(point);   
-   	
-        } 
-        
- 
-        /* Centralizacao no ponto centra da cidade */
-        //controller.setCenter(pointCB);
-        controller.animateTo(pointCB);
-        controller.setZoom(17);
-        
-       
-       Overlay overlayp;
-        ListIterator<GeoPoint> i = Route.listIterator();
-        
-        while (i.hasNext()){
-        	try {
-        		
+    	   /*adiciona as coordenadas da rota em ROUTE */
+    	   for(String r : rota ){
+    		   String k[] = r.split("\\,");
+    		   int x = (int)(Double.parseDouble(k[0]) * 1E6); 
+    		   int y = (int)(Double.parseDouble(k[1]) * 1E6); 
+    		   GeoPoint point = new GeoPoint(y, x);
+    		   Route.add(point);   
+    	   } 
+    	   Overlay overlayp;
+    	   ListIterator<GeoPoint> i = Route.listIterator();
+    	   /*percorre as coordenadas da rota e desenha uma reta entre 2 */
+    	   while (i.hasNext()){
+    		   try {
+
         		GeoPoint s = i.previous();
         		i.next();
         		GeoPoint e = i.next();
-        		
-        		Log.d("bbbb",s.toString());
 				
         		overlayp = new RouteOverlay(s, e, map);
 				map.getOverlays().add(overlayp);
-				
-			
-			} catch (Exception e) {
+    		   } catch (Exception e) {
 				i.next();
-			}
-        }
+    		   }
+    	   }
+       }
         
   
-    }
+    }/*DesenhaPontosOnibus*/
 
 
 
+	/* funcao do GPS que pega a localizacao */
+	private LocationManager getLocationManager() {
+		LocationManager locationManager = (LocationManager) getSystemService (Context.LOCATION_SERVICE);
+		return locationManager;
+	}
 
-private LocationManager getLocationManager() {
-	LocationManager locationManager = (LocationManager) getSystemService (Context.LOCATION_SERVICE);
-	return locationManager;
-}
-
-@Override
-public void onLocationChanged(Location location) {
-	// TODO Auto-generated method stub
-	int lat = (int)(location.getLatitude() * 1E6);
-	int longitude = (int)(location.getLongitude() * 1E6);
-	GeoPoint pointooo = new GeoPoint(lat, longitude);
-	controller.animateTo(pointooo);
-	
-}
+	/* funcao do GPS que eh chamada quando muda a localizacao do usuario */
+	//AAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRUUUUUUMMMAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRr
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		int lat = (int)(location.getLatitude() * 1E6);
+		int longitude = (int)(location.getLongitude() * 1E6);
+		GeoPoint pointooo = new GeoPoint(lat, longitude);
+		controller.animateTo(pointooo);	
+	}
 
 
 
@@ -343,13 +326,11 @@ public void onProviderDisabled(String provider) {
 }
 
 
-
 @Override
 public void onProviderEnabled(String provider) {
 	// TODO Auto-generated method stub
 	
 }
-
 
 
 @Override
@@ -359,19 +340,14 @@ public void onStatusChanged(String provider, int status, Bundle extras) {
 }
 
 
-
 @Override
 public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
 	// TODO Auto-generated method stub
 	
-}
-	
+}	
 
 @Override
 protected void onSaveInstanceState(Bundle outState) {
-
-	// example saving focused state of overlays
-	if (itemizedOverlay.getFocus() != null) outState.putInt("focused_1", itemizedOverlay.getLastFocusedIndex());
 	super.onSaveInstanceState(outState);
 
 }
@@ -382,4 +358,83 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 }
 
 
-}
+	/* Chama inicializarListaPrefs toda vez que o usuario mudar a preferencia*/
+	private OnSharedPreferenceChangeListener prefListener = new OnSharedPreferenceChangeListener() {
+		
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key) {
+    	
+			inicializarListaPrefs();
+			if (key.equals("routepreference") || key.equals("linepreferences")) {
+				map.getOverlays().clear();
+				DesenhaPontosOnibus(arquivo);
+			}
+		}
+	};
+
+
+	/*funcao que inicializa as preferencias do usuario para as variaveis da activity */
+	private void inicializarListaPrefs() {
+	
+		/*MAPA*/
+		String tipo_mapa = prefs.getString("mappreferences", "traffic");
+    
+		if (tipo_mapa.equalsIgnoreCase("traffic")) {
+			/* Mapa como de transito*/
+			map.setSatellite(false);
+			map.setTraffic(true);
+			map.setStreetView(false);
+		} else if (tipo_mapa.equalsIgnoreCase("satellite")) {
+			/* Mapa como de satelite*/
+			map.setSatellite(true);
+			map.setTraffic(false);
+			map.setStreetView(false);
+		}
+		
+		
+		/*OPCOES DO MAPA */
+		rota_ativada = prefs.getBoolean("routepreference", true);
+		
+		
+		/*nao esta funcionando A ESCALA */
+		
+		if (!prefs.getBoolean("zoompreference", true)) map.setBuiltInZoomControls(false);
+		
+		
+		/*OPCOES DO FOCO*/
+		
+		
+		/*OPCOES da Linha de Onibus */
+		
+		String preflinha = prefs.getString("linepreferences", "line1");
+		
+		if (preflinha.equals("line1")) {
+			arquivo = "Linha1.kml";
+			combo.setSelection(0);
+		}
+		if (preflinha.equals("line2")) {
+			arquivo = "Linha2.kml";
+			combo.setSelection(1);
+		}
+		if (preflinha.equals("line2fec")) {
+			arquivo = "Linha1.kml";
+			combo.setSelection(2);
+		}
+		if (preflinha.equals("line2museum")) {
+			arquivo = "Linha1.kml";
+			combo.setSelection(3);
+		}
+		if (preflinha.equals("linenight")) {
+			arquivo = "Linha1.kml";
+			combo.setSelection(4);
+		}
+		
+		
+		/*OPCOES de Tema dos Pinos */
+		
+
+		
+		
+	}
+
+
+}/*fim da activity*/
