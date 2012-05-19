@@ -36,6 +36,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
@@ -48,6 +49,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	String arquivo;
 	Spinner combo;
+	MyLocationOverlay ondeEstou;
 	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
@@ -85,8 +87,9 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         map.setBuiltInZoomControls(true);
         mapOverlays = map.getOverlays();
         controller = map.getController();
+        controller.setZoom(17);
         GeoPoint pointCB = new GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
-        drawable = getResources().getDrawable(R.drawable.mapa_pin);
+        drawable = getResources().getDrawable(R.drawable.busstop1);
         
         /* inicializa o spinner */
         combo = (Spinner) findViewById(R.id.linhas);
@@ -100,6 +103,8 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         
         /* GPS */
         Location loc = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        ondeEstou = new MyLocationOverlay(this,map);
+        map.getOverlays().add(ondeEstou);
         getLocationManager().requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
         
         
@@ -158,7 +163,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 
 			controller = map.getController();
 			controller.animateTo(pointCB);
-			controller.setZoom(16);
+			controller.setZoom(17);
 
 		} else {
 
@@ -182,6 +187,27 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
     protected void onStart() {
     	// TODO Auto-generated method stub
     	super.onStart(); 
+             
+    }
+    @Override
+    protected void onResume() {
+    	// TODO Auto-generated method stub
+    	super.onResume(); 
+    	ondeEstou.enableMyLocation();
+             
+    }
+    @Override
+    protected void onPause() {
+    	// TODO Auto-generated method stub
+    	super.onPause(); 
+    	ondeEstou.disableMyLocation();
+             
+    }
+    @Override
+    protected void onDestroy() {
+    	// TODO Auto-generated method stub
+    	super.onDestroy(); 
+    	getLocationManager().removeUpdates(this);
              
     }
     
@@ -311,14 +337,14 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	}
 
 	/* funcao do GPS que eh chamada quando muda a localizacao do usuario */
-	//AAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRUUUUUUMMMAAAAAARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRr
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
 		int lat = (int)(location.getLatitude() * 1E6);
 		int longitude = (int)(location.getLongitude() * 1E6);
 		GeoPoint pointooo = new GeoPoint(lat, longitude);
-		controller.animateTo(pointooo);	
+		controller.setCenter(pointooo);
+		map.invalidate();
 	}
 
 
