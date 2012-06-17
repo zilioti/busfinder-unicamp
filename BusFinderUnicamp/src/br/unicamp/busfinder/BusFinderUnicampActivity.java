@@ -117,7 +117,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         /* SPINNER com as linhas de onibus quando clicado */  
         combo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         	public void onItemSelected(AdapterView<?> parent,View v, int posicao, long id){
-        		
+        		//se der pau no kml verificar a quantidade de filhos do placemark (tirar snipet)
         		switch (posicao) {
         		case 0:
                     map.getOverlays().clear();

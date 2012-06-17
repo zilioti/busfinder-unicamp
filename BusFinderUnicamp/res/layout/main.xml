@@ -9,10 +9,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.03"
-        android:apiKey="0sztTwjxyatDEVZLijfnD1WEvDRLJeKDsCQyHhA"
+        android:apiKey="05p2PpWpGDtW3CNf9u5hbSNI45Wo-DzNrsyZCzg"
         android:clickable="true" />
 
-    <Spinner
+     <Spinner
         android:id="@+id/linhas"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />

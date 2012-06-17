@@ -4,10 +4,5 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="/home/zilioti/android-sdks/add-ons/addon-google_apis-google-8/libs/maps.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/zilioti/android-sdks/add-ons/addon-google_apis-google-8/docs/reference"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
