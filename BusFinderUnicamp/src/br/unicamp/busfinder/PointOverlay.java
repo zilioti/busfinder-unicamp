@@ -19,11 +19,13 @@ public class PointOverlay extends Overlay {
 	private Paint paint = new Paint();
 	private GeoPoint point;
 	private MapView map;
+	private String imagem;
 
 	
-	public PointOverlay (GeoPoint point, MapView mapView) {
+	public PointOverlay (GeoPoint point, MapView mapView, String imagem) {
 		this.point = point;
 		this.map = mapView;
+		this.imagem = imagem;
 	}
 	
 	/* Desenha a marcacao */
@@ -32,8 +34,16 @@ public class PointOverlay extends Overlay {
 			boolean shadow) {
 		super.draw(canvas, mapView, shadow);
 		Point p = map.getProjection().toPixels(point, null);
-		Bitmap pin = BitmapFactory.decodeResource(
-				map.getResources(), R.drawable.mapa_pin);
+		Bitmap pin = null;
+		
+		if (imagem.equals("onibus")){
+			pin = BitmapFactory.decodeResource(
+					map.getResources(), R.drawable.bus1);
+		}
+		else if (imagem.equals("pessoa")){
+			pin = BitmapFactory.decodeResource(
+					map.getResources(), R.drawable.you1);
+		}
 		
 		/* Centraliza a marcacao */
 		Rect rectOverlay = 

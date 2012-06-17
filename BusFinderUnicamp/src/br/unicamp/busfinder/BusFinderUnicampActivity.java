@@ -2,13 +2,17 @@ package br.unicamp.busfinder;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -52,6 +56,13 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	MyLocationOverlay ondeEstou;
 	int i;
 	
+	private Overlay pessoa;
+	private Overlay pessoaantigo;
+	
+	private Overlay onibus;
+	private Overlay onibusantigo;
+
+	
 	/* Latitude e Longitude do CB da Unicamp */
 	private static final int CENTER_LATITUDE = (int) (-22.817055 * 1E6);
 	private static final int CENTER_LONGITUDE = (int) (-47.069729 * 1E6);
@@ -60,11 +71,11 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	boolean rota_ativada;
 	
-	private String[] linhas = { "Linha 1 : Sentido Anti-Hor�rio", 
-								"Linha 2 : Sentido Hor�rio", 
-								"Linha 2 - Via FEC : Sentido Hor�rio", 
-								"Linha 2 - Via Museu : Sentido Hor�rio", 
-								"Linha Noturna : Sentido Hor�rio"
+	private String[] linhas = { "Linha 1 : Sentido Anti-Horï¿½rio", 
+								"Linha 2 : Sentido Horï¿½rio", 
+								"Linha 2 - Via FEC : Sentido Horï¿½rio", 
+								"Linha 2 - Via Museu : Sentido Horï¿½rio", 
+								"Linha Noturna : Sentido Horï¿½rio"
 							   };
 	
 	
@@ -76,6 +87,8 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	private MapController controller;
 	
    
+	private ArrayList<Overlay> overlayPoints = new ArrayList<Overlay>();
+
 	
 	/** Called when the activity is first created. */
     @Override
@@ -124,6 +137,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.invalidate();
                     arquivo = "Linha1.kml";
                     DesenhaPontosOnibus(arquivo);
+                    DesenhaOnibus(1);
     	            break;
     	            
         		case 1:
@@ -131,6 +145,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.invalidate();
                     arquivo = "Linha2.kml";
                     DesenhaPontosOnibus(arquivo);	
+                    DesenhaOnibus(2);
                     break;
         		case 2:
                     break;
@@ -292,12 +307,12 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 			GeoPoint point = new GeoPoint(y, x);
 			// pontos.add(new OverlayItem(point,p,"xtotal"));
 			itemizedOverlay.addOverlay(new CustomOverlayItem(point, p.nomeponto,
-					"7 min próximo ônibus", "10 min ônibus seguinte",p.favorito));
+					"7 min prÃ³ximo Ã´nibus", "10 min Ã´nibus seguinte",p.favorito));
         }
         
         mapOverlays.add(itemizedOverlay);
         
-       /*s� desenha a rota se estiver ativada nas preferencias */
+       /*sï¿½ desenha a rota se estiver ativada nas preferencias */
        if (rota_ativada){
         
     	   /*adiciona as coordenadas da rota em ROUTE */
@@ -330,6 +345,48 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
     }/*DesenhaPontosOnibus*/
 
 
+	
+	public void DesenhaOnibus(int linha){
+			// TODO Auto-generated method stub
+		
+		WebAssyncTask z = new WebAssyncTask();
+		String response = z.readcircular("http://mc933.lab.ic.unicamp.br:8011/circular/"+linha);
+		
+		  double latonibus = 0;
+          double longitudeonibus = 0;
+		
+		/*
+		String url = "http://mc933.lab.ic.unicamp.br:8011/circular/"+linha;
+          
+          WebService webService = new WebService(url);
+          
+        
+          //passa parametros para o servidor se preciso...
+          Map params = new HashMap();
+          
+          //Pega a resposta do servidor
+
+          String response = webService.webGet("", params);
+         */
+          try{
+        	  //Seta a resposta como um objeto JSON para acessar as 
+        	  JSONObject o=new JSONObject(response);
+        	  latonibus=Double.parseDouble(o.get("lat").toString());
+        	  longitudeonibus=Double.parseDouble(o.get("long").toString());
+        	  Log.d("asdasdad",String.valueOf(latonibus));
+      		
+      		} catch (JSONException e1) {
+      			e1.printStackTrace();
+      		}
+      		
+			GeoPoint pointbus = new GeoPoint((int) (latonibus * 1E6), (int) (longitudeonibus * 1E6));
+	        onibus = new PointOverlay(pointbus, map, "onibus");
+	        map.getOverlays().remove(onibusantigo);
+	        map.getOverlays().add(onibus);
+	        onibusantigo = onibus;
+			//controller.setCenter(pointooo);
+			map.invalidate();
+	}
 
 	/* funcao do GPS que pega a localizacao */
 	private LocationManager getLocationManager() {
@@ -344,7 +401,11 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 		int lat = (int)(location.getLatitude() * 1E6);
 		int longitude = (int)(location.getLongitude() * 1E6);
 		GeoPoint pointooo = new GeoPoint(lat, longitude);
-		controller.setCenter(pointooo);
+        pessoa = new PointOverlay(pointooo, map, "pessoa");
+        map.getOverlays().remove(pessoaantigo);
+        map.getOverlays().add(pessoa);
+        pessoaantigo = pessoa;
+		//controller.setCenter(pointooo);
 		map.invalidate();
 	}
 
