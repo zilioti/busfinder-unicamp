@@ -15,6 +15,7 @@
     
         <!-- Lista de tipos de foco -->
     <string-array name="entries_list_focuspreferences">
+        <item>Sem foco</item>
         <item>Você</item>
         <item>Ônibus</item>
         <item>Centro Unicamp</item>
@@ -22,6 +23,7 @@
 
     <!-- Valores do foco -->
     <string-array name="entryvalues_list_focuspreferences">
+        <item>off</item>
         <item>you</item>
         <item>bus</item>
         <item>unicamp</item>

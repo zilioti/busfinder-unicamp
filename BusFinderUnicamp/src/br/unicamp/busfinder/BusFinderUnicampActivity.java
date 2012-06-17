@@ -26,6 +26,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -56,11 +57,19 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	MyLocationOverlay ondeEstou;
 	int i;
 	
+	Handler handleronibus;
+	ThreadAtualizaOnibus threadonibus;
+	
 	private Overlay pessoa;
 	private Overlay pessoaantigo;
 	
 	private Overlay onibus;
 	private Overlay onibusantigo;
+	
+	String preffoco;
+	
+	GeoPoint pointCB ;
+	GeoPoint pointyou;
 
 	
 	/* Latitude e Longitude do CB da Unicamp */
@@ -102,7 +111,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         mapOverlays = map.getOverlays();
         controller = map.getController();
         controller.setZoom(17);
-        GeoPoint pointCB = new GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
+        pointCB = new GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
         drawable = getResources().getDrawable(R.drawable.busstop1);
         
         /* inicializa o spinner */
@@ -137,7 +146,10 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.invalidate();
                     arquivo = "Linha1.kml";
                     DesenhaPontosOnibus(arquivo);
-                    DesenhaOnibus(1);
+                    handleronibus = new Handler(); 
+                    if (threadonibus != null) threadonibus.kill();
+                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,1,handleronibus,preffoco,controller);
+                    handleronibus.post(threadonibus);
     	            break;
     	            
         		case 1:
@@ -145,7 +157,12 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     map.invalidate();
                     arquivo = "Linha2.kml";
                     DesenhaPontosOnibus(arquivo);	
-                    DesenhaOnibus(2);
+                    DesenhaPontosOnibus(arquivo);
+                    handleronibus = new Handler(); 
+                    if (threadonibus != null) threadonibus.kill();
+                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,2,handleronibus,preffoco,controller);
+                    handleronibus.post(threadonibus);
+                    //DesenhaOnibus(2);
                     break;
         		case 2:
                     break;
@@ -193,8 +210,12 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 
 		}
         
+       
         /* escuta a funcao quando alguma preferencia eh alterada */
         prefs.registerOnSharedPreferenceChangeListener(prefListener);
+        
+        
+        
     }
     
     
@@ -224,6 +245,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
     	// TODO Auto-generated method stub
     	super.onDestroy(); 
     	getLocationManager().removeUpdates(this);
+    	if (threadonibus != null) threadonibus.kill();
              
     }
     
@@ -345,48 +367,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
     }/*DesenhaPontosOnibus*/
 
 
-	
-	public void DesenhaOnibus(int linha){
-			// TODO Auto-generated method stub
-		
-		WebAssyncTask z = new WebAssyncTask();
-		String response = z.readcircular("http://mc933.lab.ic.unicamp.br:8011/circular/"+linha);
-		
-		  double latonibus = 0;
-          double longitudeonibus = 0;
-		
-		/*
-		String url = "http://mc933.lab.ic.unicamp.br:8011/circular/"+linha;
-          
-          WebService webService = new WebService(url);
-          
-        
-          //passa parametros para o servidor se preciso...
-          Map params = new HashMap();
-          
-          //Pega a resposta do servidor
-
-          String response = webService.webGet("", params);
-         */
-          try{
-        	  //Seta a resposta como um objeto JSON para acessar as 
-        	  JSONObject o=new JSONObject(response);
-        	  latonibus=Double.parseDouble(o.get("lat").toString());
-        	  longitudeonibus=Double.parseDouble(o.get("long").toString());
-        	  Log.d("asdasdad",String.valueOf(latonibus));
-      		
-      		} catch (JSONException e1) {
-      			e1.printStackTrace();
-      		}
-      		
-			GeoPoint pointbus = new GeoPoint((int) (latonibus * 1E6), (int) (longitudeonibus * 1E6));
-	        onibus = new PointOverlay(pointbus, map, "onibus");
-	        map.getOverlays().remove(onibusantigo);
-	        map.getOverlays().add(onibus);
-	        onibusantigo = onibus;
-			//controller.setCenter(pointooo);
-			map.invalidate();
-	}
 
 	/* funcao do GPS que pega a localizacao */
 	private LocationManager getLocationManager() {
@@ -400,12 +380,15 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 		// TODO Auto-generated method stub
 		int lat = (int)(location.getLatitude() * 1E6);
 		int longitude = (int)(location.getLongitude() * 1E6);
-		GeoPoint pointooo = new GeoPoint(lat, longitude);
-        pessoa = new PointOverlay(pointooo, map, "pessoa");
+		pointyou = new GeoPoint(lat, longitude);
+        pessoa = new PointOverlay(pointyou, map, "pessoa");
         map.getOverlays().remove(pessoaantigo);
         map.getOverlays().add(pessoa);
         pessoaantigo = pessoa;
-		//controller.setCenter(pointooo);
+        if (preffoco.equals("you")){
+        	controller.setCenter(pointyou);
+        	controller.animateTo(pointyou);
+        }
 		map.invalidate();
 	}
 
@@ -492,8 +475,18 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 		if (!prefs.getBoolean("zoompreference", true)) map.setBuiltInZoomControls(false);
 		
 		
-		/*OPCOES DO FOCO*/
 		
+		
+		/*OPCOES DO FOCO*/
+		preffoco = prefs.getString("focuspreferences", "off");
+		 if (preffoco.equals("unicamp") && (pointCB !=null)){
+	        	controller.setCenter(pointCB);
+	        	controller.animateTo(pointCB);
+	        }
+		 if (preffoco.equals("you") && (pointyou != null)){
+	        	controller.setCenter(pointyou);
+	        	controller.animateTo(pointyou);
+	        }
 		
 		/*OPCOES da Linha de Onibus */
 		
