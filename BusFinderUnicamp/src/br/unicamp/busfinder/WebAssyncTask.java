@@ -44,6 +44,12 @@ import android.widget.TextView;
 			return this.doInBackground(url);
 
 		}
+		
+		public String readprevisao(String url) {
+			return this.doInBackground(url);
+
+		}
+
 
 	}
 

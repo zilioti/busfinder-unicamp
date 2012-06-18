@@ -17,6 +17,9 @@ package br.unicamp.busfinder;
 
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -120,6 +123,10 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 	//protected final boolean onTap(int index) {
 	public final boolean onTap(int index) {
 		
+		
+		
+		
+		
 		handler.removeCallbacks(finishBalloonInflation);
 		isInflating = true;
 		handler.postDelayed(finishBalloonInflation, BALLOON_INFLATION_TIME);
@@ -127,6 +134,37 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 		currentFocusedIndex = index;
 		currentFocusedItem = createItem(index);
 		setLastFocusedIndex(index);
+		
+		double latponto = (double) (currentFocusedItem.getPoint().getLatitudeE6()/1E6);
+		double longponto = (double) (currentFocusedItem.getPoint().getLongitudeE6()/1E6);
+		String response = null;
+		String tempo = "nao calculou";
+	
+		try {
+			WebAssyncTask z = new WebAssyncTask();
+			response = z.readprevisao("http://mc933.lab.ic.unicamp.br:8011/previsao/linha2?latponto="+String.valueOf(latponto)+"&longponto="+String.valueOf(longponto));
+			
+
+			 try{
+				  //Seta a resposta como um objeto JSON para acessar as 
+				  JSONObject o=new JSONObject(response);
+				  Log.d("bbbbbbbbbbbbb",response);
+				  tempo= String.valueOf(o.get("previsao"));
+				  Log.d("aaaaaaaaaaa",tempo);
+					
+				    		
+				} catch (JSONException e1) {
+					e1.printStackTrace();
+				}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Log.d("sem internet", "erro");
+		}
+		
+		
+		
+		
+		currentFocusedItem.setSnippet2("Proximo onibus em "+tempo+" minutos");
 		
 		
 		onBalloonOpen(index);

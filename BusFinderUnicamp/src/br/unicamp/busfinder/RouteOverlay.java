@@ -29,14 +29,14 @@ public class RouteOverlay extends Overlay {
 			boolean shadow) {
 		super.draw(canvas, mapView, shadow);
 	
-		//A PARTIR DAQUI TO TENTANDO FAZER ALGO AI aueheuhhaauhaeuheauhea
+		
 		 Paint   paint = new Paint();
 	        paint.setDither(true);
-	        paint.setColor(Color.GREEN);
+	        paint.setColor(Color.BLUE);
 	        paint.setStyle(Paint.Style.FILL_AND_STROKE);
 	        paint.setStrokeJoin(Paint.Join.ROUND);
 	        paint.setStrokeCap(Paint.Cap.ROUND);
-	        paint.setStrokeWidth(6);
+	        paint.setStrokeWidth(9);
 	        
 	        Point p1 = new Point();
 	        Point p2 = new Point();
