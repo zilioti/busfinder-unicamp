@@ -4,17 +4,11 @@ package br.unicamp.busfinder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-
-import android.app.Activity;
-import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 

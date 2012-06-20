@@ -15,11 +15,6 @@
 
 package br.unicamp.busfinder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 
@@ -30,41 +25,9 @@ public class CustomOverlayItem extends OverlayItem {
 	
 	public CustomOverlayItem(GeoPoint ponto, String title, String snippet, String snippet2, boolean favorito) {
 		super(ponto, title, "");
-		//aqui faz a requisicao do servidor
-		String tempo = null;
 		
-		double latponto = (double) (ponto.getLatitudeE6()/1E6);
-		double longponto = (double) (ponto.getLongitudeE6()/1E6);
-		String response = null;
-		
-		
-	/*	try {
-			WebAssyncTask z = new WebAssyncTask();
-			response = z.readcircular("http://mc933.lab.ic.unicamp.br:8011/previsao/linha2?latponto="+String.valueOf(latponto)+"&longponto="+String.valueOf(longponto));
-
-			 try{
-				  //Seta a resposta como um objeto JSON para acessar as 
-				  JSONObject o=new JSONObject(response);
-				  Log.d("bbbbbbbbbbbbb",response);
-				  tempo= String.valueOf(o.get("previsao"));
-				  Log.d("aaaaaaaaaaa",tempo);
-					
-				    		
-				} catch (JSONException e1) {
-					e1.printStackTrace();
-				}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			Log.d("sem internet", "erro");
-		}
-		
-		*/
-		
-		
-		//msnippet2 = tempo;
-		msnippet2 = "valor";
+		msnippet2 = "nada";
 		mfavorito = favorito;
-		
 		
 	}
 

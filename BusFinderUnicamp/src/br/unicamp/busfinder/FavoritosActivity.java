@@ -4,11 +4,8 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
-import br.unicamp.busfinder.BusFinderUnicampActivity.PontoOnibus;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;

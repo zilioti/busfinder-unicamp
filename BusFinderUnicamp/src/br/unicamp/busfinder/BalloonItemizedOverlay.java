@@ -16,28 +16,22 @@
 package br.unicamp.busfinder;
 
 import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 
 /**
  * An abstract extension of ItemizedOverlay for displaying an information balloon
@@ -65,7 +59,6 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 	private boolean showClose = true;
 	private boolean showDisclosure = false;
 	private boolean snapToCenter = true;
-	private boolean showFavorite = false;
 	
 	private static boolean isInflating = false;
 	

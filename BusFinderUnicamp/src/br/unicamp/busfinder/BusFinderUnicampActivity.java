@@ -2,21 +2,12 @@ package br.unicamp.busfinder;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +19,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,14 +26,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 
 public class BusFinderUnicampActivity extends MapActivity implements LocationListener, OnSharedPreferenceChangeListener {
    
@@ -95,9 +83,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	private MapView map;
 	private MapController controller;
 	
-   
-	private ArrayList<Overlay> overlayPoints = new ArrayList<Overlay>();
-
 	
 	/** Called when the activity is first created. */
     @Override
@@ -125,7 +110,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         inicializarListaPrefs();
         
         /* GPS */
-        Location loc = getLocationManager().getLastKnownLocation(LocationManager.GPS_PROVIDER);
         ondeEstou = new MyLocationOverlay(this,map);
         map.getOverlays().add(ondeEstou);
         getLocationManager().requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
@@ -332,7 +316,6 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
  		
         ArrayList<GeoPoint> Route = new ArrayList<GeoPoint>();
  		itemizedOverlay = new SimpleItemizedOverlay(drawable, map);       
-        List<OverlayItem> pontos = new ArrayList<OverlayItem>();
         	
         /* adiciona os pontos na lista itemizedOverlay */
         for (PontoOnibus p : coordenada) {
