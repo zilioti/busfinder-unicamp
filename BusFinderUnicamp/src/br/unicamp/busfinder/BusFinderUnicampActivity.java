@@ -271,6 +271,9 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	    case R.id.pref:
 	        	startActivity(new Intent(this, PrefsActivity.class));
 	            return true;
+	    case R.id.fav:
+        	startActivity(new Intent(this, FavoritosActivity.class));
+            return true;
 
 	        default:
 	            return super.onOptionsItemSelected(item);

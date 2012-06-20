@@ -31,6 +31,7 @@
         </activity>
         
         <activity android:name=".PrefsActivity" android:label="Preferências" />
+        <activity android:name=".FavoritosActivity" android:label="Favoritos" />
     </application>
 
 </manifest>
