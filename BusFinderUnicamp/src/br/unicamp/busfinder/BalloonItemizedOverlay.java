@@ -20,6 +20,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -67,6 +69,8 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 	
 	private static boolean isInflating = false;
 	
+	private Context context;
+	
 	/**
 	 * Create a new BalloonItemizedOverlay
 	 * 
@@ -78,6 +82,7 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 		this.mapView = mapView;
 		viewOffset = 0;
 		mc = mapView.getController();
+		this.context = mapView.getContext();
 	}
 	
 	/**
@@ -138,27 +143,23 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 		double latponto = (double) (currentFocusedItem.getPoint().getLatitudeE6()/1E6);
 		double longponto = (double) (currentFocusedItem.getPoint().getLongitudeE6()/1E6);
 		String response = null;
-		String tempo = "nao calculou";
+		String tempo = "NAO CALCULADO";
 	
 		try {
 			WebAssyncTask z = new WebAssyncTask();
 			response = z.readprevisao("http://mc933.lab.ic.unicamp.br:8011/previsao/linha2?latponto="+String.valueOf(latponto)+"&longponto="+String.valueOf(longponto));
-			
-
 			 try{
 				  //Seta a resposta como um objeto JSON para acessar as 
 				  JSONObject o=new JSONObject(response);
-				  Log.d("bbbbbbbbbbbbb",response);
-				  tempo= String.valueOf(o.get("previsao"));
-				  Log.d("aaaaaaaaaaa",tempo);
-					
+				  tempo= String.valueOf(o.get("previsao"));	
 				    		
 				} catch (JSONException e1) {
 					e1.printStackTrace();
 				}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.d("sem internet", "erro");
+			Toast toast = Toast.makeText(context, "Problema com a conexao.", Toast.LENGTH_SHORT);
+   		 	toast.show();
 		}
 		
 		
@@ -175,6 +176,7 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 		}
 		
 		
+	        
 		 if(currentFocusedItem.mfavorito){
              buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_on);
              
@@ -333,14 +335,23 @@ public abstract class BalloonItemizedOverlay<Item extends CustomOverlayItem> ext
 					});
 					buttonRegion.setOnClickListener(new View.OnClickListener() {
 			             public void onClick(View v) {
-			            	 if(!currentFocusedItem.mfavorito){
-			                 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_on);
-			                 currentFocusedItem.mfavorito = true;
-			                 
+			            	 if(!currentFocusedItem.mfavorito){ 
+			            		 PontosFavoritos2 bancodedados = new PontosFavoritos2(mapView.getContext());
+			            		 bancodedados.salvar(currentFocusedIndex, "nome do ponto"+String.valueOf(currentFocusedIndex));
+			            		 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_on);
+			            		 currentFocusedItem.mfavorito = true;
+			            		 bancodedados.fechar();
+			            		 Toast toast = Toast.makeText(context, "Ponto adicionado aos favoritos.", Toast.LENGTH_SHORT);
+			            		 toast.show();
 			            	 }
 			            	 else {
+			            		 PontosFavoritos2 bancodedados = new PontosFavoritos2(mapView.getContext());
+			            		 bancodedados.deletar(currentFocusedIndex);
 			            		 buttonRegion.setBackgroundResource(android.R.drawable.btn_star_big_off);
 			            		 currentFocusedItem.mfavorito = false;
+			            		 bancodedados.fechar();
+			            		 Toast toast = Toast.makeText(context, "Ponto removido dos favoritos.", Toast.LENGTH_SHORT);
+			            		 toast.show();
 			            		
 			            	 }
 			             }

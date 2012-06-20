@@ -80,11 +80,11 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	
 	boolean rota_ativada;
 	
-	private String[] linhas = { "Linha 1 : Sentido Anti-Horï¿½rio", 
-								"Linha 2 : Sentido Horï¿½rio", 
-								"Linha 2 - Via FEC : Sentido Horï¿½rio", 
-								"Linha 2 - Via Museu : Sentido Horï¿½rio", 
-								"Linha Noturna : Sentido Horï¿½rio"
+	private String[] linhas = { "Linha 1 : Sentido Anti-Horario", 
+								"Linha 2 : Sentido Horario", 
+								"Linha 2 - Via FEC : Sentido Horario", 
+								"Linha 2 - Via Museu : Sentido Horario", 
+								"Linha Noturna : Sentido Horario"
 							   };
 	
 	
@@ -135,7 +135,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         DesenhaPontosOnibus(arquivo); 
         
         
-        
+       
         /* SPINNER com as linhas de onibus quando clicado */  
         combo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         	public void onItemSelected(AdapterView<?> parent,View v, int posicao, long id){
@@ -297,14 +297,24 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 			e.printStackTrace();
 		}
  			
+ 		
+ 		PontosFavoritos2 bancodedados = new PontosFavoritos2(this);      
+	        
 		for (int i = 0; i < doc.getElementsByTagName("Placemark").getLength() - 1; i++) {
 			String x = doc.getElementsByTagName("Placemark").item(i).getChildNodes().item(1).getTextContent();
 			String y = doc.getElementsByTagName("Placemark").item(i).getChildNodes().item(7).getTextContent();
 			String a = y.replaceFirst("\n", "").replaceAll(" ", "");
-			PontoOnibus b = new PontoOnibus(a,x,false);
+			PontoOnibus b;
+			if (bancodedados.buscarPonto(i) == true) {
+				b = new PontoOnibus(a,x,true);
+			}
+			else {
+				b = new PontoOnibus(a,x,false);
+			}
 			
 			coordenada.add(b);
 		}
+		bancodedados.fechar();
 
  		String z = doc.getElementsByTagName("coordinates").item(doc.getElementsByTagName("coordinates").getLength()-1).getTextContent();
  		String a = z.replaceFirst("\n","").replaceAll(" ", "");
