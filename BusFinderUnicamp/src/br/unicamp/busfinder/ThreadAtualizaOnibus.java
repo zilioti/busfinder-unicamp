@@ -22,9 +22,10 @@ public class ThreadAtualizaOnibus implements Runnable {
 	boolean ON;
 	MapController controller;
 	String preffoco;
+	String preftema;
 
 
-	public ThreadAtualizaOnibus(MapView map, Overlay onibus, Overlay onibusantigo, int linha, Handler handler, String preffoco, MapController controller){
+	public ThreadAtualizaOnibus(MapView map, Overlay onibus, Overlay onibusantigo, int linha, Handler handler, String preffoco,String preftema, MapController controller){
 		this.map = map;
 		this.onibus = onibus;
 		this.onibusantigo = onibusantigo;
@@ -32,6 +33,7 @@ public class ThreadAtualizaOnibus implements Runnable {
 		this.handler = handler;
 		this.controller = controller;
 		this.preffoco = preffoco;
+		this.preftema = preftema;
 		this.ON = true;
 		
 	}
@@ -80,7 +82,7 @@ public class ThreadAtualizaOnibus implements Runnable {
 		}
   		
 			GeoPoint pointbus = new GeoPoint((int) (latonibus * 1E6), (int) (longitudeonibus * 1E6));
-			onibus = new PointOverlay(pointbus, map, "onibus");
+			onibus = new PointOverlay(pointbus, map, "onibus",preftema);
 			map.getOverlays().remove(onibusantigo);
 			map.getOverlays().add(onibus);
 			onibusantigo = onibus;

@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -55,6 +56,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 	private Overlay onibusantigo;
 	
 	String preffoco;
+	String preftema = null;
 	
 	GeoPoint pointCB ;
 	GeoPoint pointyou;
@@ -97,7 +99,10 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         controller = map.getController();
         controller.setZoom(17);
         pointCB = new GeoPoint(CENTER_LATITUDE, CENTER_LONGITUDE);
-        drawable = getResources().getDrawable(R.drawable.busstop1);
+        
+
+        
+       
         
         /* inicializa o spinner */
         combo = (Spinner) findViewById(R.id.linhas);
@@ -108,6 +113,8 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
         /* inicializa as preferencias do usuario, obs: em tempo real */
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         inicializarListaPrefs();
+        
+
         
         /* GPS */
         ondeEstou = new MyLocationOverlay(this,map);
@@ -132,7 +139,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     DesenhaPontosOnibus(arquivo);
                     handleronibus = new Handler(); 
                     if (threadonibus != null) threadonibus.kill();
-                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,1,handleronibus,preffoco,controller);
+                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,1,handleronibus,preffoco,preftema,controller);
                     handleronibus.post(threadonibus);
     	            break;
     	            
@@ -144,7 +151,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
                     DesenhaPontosOnibus(arquivo);
                     handleronibus = new Handler(); 
                     if (threadonibus != null) threadonibus.kill();
-                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,2,handleronibus,preffoco,controller);
+                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,2,handleronibus,preffoco,preftema,controller);
                     handleronibus.post(threadonibus);
                     //DesenhaOnibus(2);
                     break;
@@ -313,6 +320,15 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
  		/*FIM do PARSE devolvendo a lista de coordenadas e rotas com as latitudes e longitudes dos pontos de onibus */
         
         
+        /* define valores para tema */
+		if(preftema.equals("pattern")){
+			 drawable = getResources().getDrawable(R.drawable.busstop1);
+		}
+		else if(preftema.equals("mario")){
+			 drawable = getResources().getDrawable(R.drawable.busstop2);
+		}
+        
+ 		
  		
         ArrayList<GeoPoint> Route = new ArrayList<GeoPoint>();
  		itemizedOverlay = new SimpleItemizedOverlay(drawable, map);       
@@ -377,7 +393,7 @@ public class BusFinderUnicampActivity extends MapActivity implements LocationLis
 		int lat = (int)(location.getLatitude() * 1E6);
 		int longitude = (int)(location.getLongitude() * 1E6);
 		pointyou = new GeoPoint(lat, longitude);
-        pessoa = new PointOverlay(pointyou, map, "pessoa");
+        pessoa = new PointOverlay(pointyou, map, "pessoa",preftema);
         map.getOverlays().remove(pessoaantigo);
         map.getOverlays().add(pessoa);
         pessoaantigo = pessoa;
@@ -435,9 +451,16 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key) {
     	
 			inicializarListaPrefs();
-			if (key.equals("routepreference") || key.equals("linepreferences")) {
+			if (key.equals("routepreference") || key.equals("linepreferences") || key.equals("themepreferences")) {
 				map.getOverlays().clear();
 				DesenhaPontosOnibus(arquivo);
+				if (key.equals("themepreferences") || key.equals("focuspreferences")){
+                    handleronibus = new Handler(); 
+                    if (threadonibus != null) threadonibus.kill();
+                    threadonibus = new ThreadAtualizaOnibus(map,onibus,onibusantigo,1,handleronibus,preffoco,preftema,controller);
+                    handleronibus.post(threadonibus);
+				}
+				
 			}
 		}
 	};
@@ -511,6 +534,8 @@ public void onRestoreInstanceState(Bundle savedInstanceState) {
 		
 		
 		/*OPCOES de Tema dos Pinos */		
+		preftema = prefs.getString("themepreferences", "pattern");
+		
 		
 		
 	}

@@ -16,12 +16,14 @@ public class PointOverlay extends Overlay {
 	private GeoPoint point;
 	private MapView map;
 	private String imagem;
+	private String tema;
 
 	
-	public PointOverlay (GeoPoint point, MapView mapView, String imagem) {
+	public PointOverlay (GeoPoint point, MapView mapView, String imagem, String tema) {
 		this.point = point;
 		this.map = mapView;
 		this.imagem = imagem;
+		this.tema = tema;
 	}
 	
 	/* Desenha a marcacao */
@@ -33,12 +35,24 @@ public class PointOverlay extends Overlay {
 		Bitmap pin = null;
 		
 		if (imagem.equals("onibus")){
-			pin = BitmapFactory.decodeResource(
-					map.getResources(), R.drawable.bus1);
+			if(tema.equals("pattern")){
+				pin = BitmapFactory.decodeResource(
+						map.getResources(), R.drawable.bus1);
+			}
+			else if(tema.equals("mario")){
+				pin = BitmapFactory.decodeResource(
+						map.getResources(), R.drawable.bus2);
+			}
 		}
 		else if (imagem.equals("pessoa")){
-			pin = BitmapFactory.decodeResource(
-					map.getResources(), R.drawable.you1);
+			if(tema.equals("pattern")){
+				pin = BitmapFactory.decodeResource(
+						map.getResources(), R.drawable.you1);
+			}
+			else if(tema.equals("mario")){
+				pin = BitmapFactory.decodeResource(
+						map.getResources(), R.drawable.you2);
+			}
 		}
 		
 		/* Centraliza a marcacao */
